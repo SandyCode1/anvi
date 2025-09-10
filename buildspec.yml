@@ -1,0 +1,23 @@
+version: 0.2
+
+env:
+  variables:
+    S3_BUCKET: "anvi.sandeepnegi.online"
+    CLOUDFRONT_DIST_ID: "EYV5ZDHXTY3GQ"
+
+phases:
+  install:
+    commands:
+      - echo "Nothing to install for static site"
+
+  build:
+    commands:
+      - echo "Deploying updated files to S3..."
+      - aws s3 cp . s3://$S3_BUCKET/ --recursive
+      - echo "Invalidating CloudFront cache..."
+      - aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DIST_ID --paths "/*"
+
+artifacts:
+  files:
+    - '**/*'
+  base-directory: '.'
